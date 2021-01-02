@@ -1,4 +1,3 @@
-  
 {
   "name": "appagri",
   "version": "1.0.0",
@@ -6,9 +5,12 @@
   "main": "index.js",
   "dependencies": {
     "bcryptjs": "^2.4.3",
+    "cookie-parser": "^1.4.5",
     "dotenv": "^8.2.0",
     "ejs": "^3.1.5",
     "express": "^4.17.1",
+    "express-mysql-session": "^2.1.5",
+    "express-session": "^1.17.1",
     "mysql": "^2.18.1",
     "nodemon": "^2.0.6",
     "passport": "^0.4.1"
