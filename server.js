@@ -60,7 +60,8 @@ app.use((req, res, next) => {
 })*/
 
 app.get('/', (req, res) => {
-    res.render('index.ejs');
+    if (req.session.authenticated) res.redirect('/home')
+    else res.render('login.ejs');
 })
 
 app.get('/error', (req, res) => {
@@ -68,12 +69,13 @@ app.get('/error', (req, res) => {
 })
 
 app.get('/login', (req, res) => {
-    if (req.session.authenticated) res.redirect('home')
+    if (req.session.authenticated) res.redirect('/home')
     else res.render('login.ejs');
 })
 
 app.get('/home', (req, res, next) => {
-    res.render('home.ejs')
+    if (req.session.authenticated) res.render('home.ejs');
+    else res.redirect('/error');
 })
 
 
@@ -177,6 +179,7 @@ app.get('/loggato', validateCookie,(req, res) => {
     res.status(200).json({ msg: 'sei dentro' });
 });
 */
-const port = process.env.port || 3000;
+
+const port = process.env.port || 8080;
 
 app.listen(port)
