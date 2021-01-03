@@ -4,6 +4,7 @@ const bcrypt = require('bcryptjs')
 const session = require('express-session');
 //const cookieParser = require('cookie-parser')
 const MySQLStore = require('express-mysql-session')(session);
+const path = require('path');
 
 const users = []
 const name = []
@@ -17,29 +18,30 @@ const e = require('express');
 app.use(express.static("public"));
 
 const con = mysql.createConnection({
-    host: 'depas.c9zdk5ptcfcq.eu-central-1.rds.amazonaws.com',
+    host: 'app-agri.cwq3tqmj1f1n.eu-central-1.rds.amazonaws.com',
     user: 'depas',
-    password: 'Roccat75!',
-    database: 'login'
+    password: 'f23L;-nO',
+    database: 'agri'
 })
 
 const pool = mysql.createPool({
     connectionLimit: 1,
-    host: 'depas.c9zdk5ptcfcq.eu-central-1.rds.amazonaws.com',
+    host: 'app-agri.cwq3tqmj1f1n.eu-central-1.rds.amazonaws.com',
     user: 'depas',
-    password: 'Roccat75!',
-    database: 'login'
+    password: 'f23L;-nO',
+    database: 'agri'
 })
 
 const options = {
-    host: 'depas.c9zdk5ptcfcq.eu-central-1.rds.amazonaws.com',
+    host: 'app-agri.cwq3tqmj1f1n.eu-central-1.rds.amazonaws.com',
     user: 'depas',
-    password: 'Roccat75!',
-    database: 'login'
+    password: 'f23L;-nO',
+    database: 'agri'
 }
 
 const sessionStore = new MySQLStore(options);
 
+app.use('/static', express.static(path.join(__dirname, 'public')))
 
 app.set('view-engine', 'ejs')
 //app.use(cookieParser());
@@ -94,14 +96,14 @@ app.post('/login', (req, res) => {
                     con.query(checkMail, function (err, emailCheck) {
                         if (emailCheck[0] === undefined) {
                             res.redirect('/error')
+                            console.log('>> email non esiste <<')
                         } else {
                             const login = `SELECT password FROM login WHERE email = '${email}' AND email IS NOT NULL`
                             con.query(login, function (err, result) {
-                                //console.log(typeof(result[0].password))
                                 if (result[0].password) {
                                     bcrypt.compare(password, result[0].password, function (err, result) {
-                                        console.log('>> ' + password)
                                         if (result) {
+                                            console.log('>> ' + password + ' <<')
                                             req.session.authenticated = true;
                                             req.session.user = {
                                                 email, password
@@ -132,7 +134,6 @@ app.post('/register', (req, res) => {
             const hashedPassword = await bcrypt.hash(req.body.password, 10)
             const name = req.body.name
             const email = req.body.email
-
             const check_email = `SELECT email FROM login WHERE email = '${email}'`
             pool.query(check_email, function (err, result1) {
                 if (result1[0] != undefined) {
@@ -142,14 +143,14 @@ app.post('/register', (req, res) => {
                     }
                 }
                 else {
-                    const register = `INSERT INTO login (username, email, password) VALUES ('${name}', '${email}', '${hashedPassword}');`
+                    const register = `INSERT INTO login (user, email, password, idlogin) VALUES ('${name}', '${email}', '${hashedPassword}', '1234');`
                     pool.query(register, function (err, result2) {
                         if (err) throw err
                         console.log(result2)
 
                     })
                     res.redirect('/login')
-                    console.log('Inserisco dati a DB!')
+                    console.log('Inserisco dati a DB!') 
                 }
             })
         } catch {
