@@ -1,22 +1,11 @@
-@font-face {
-  font-family: Poppins-Regular;
-  src: url("C:\Users\xccvscsc\Desktop\Nuova cartella (3)\Nuova cartella\css\fonts\poppins\Poppins-Regular.ttf"); 
-}
 
-@font-face {
-  font-family: Poppins-Medium;
-  src: url("C:\Users\xccvscsc\Desktop\Nuova cartella (3)\Nuova cartella\css\fonts\poppins\Poppins-Medium.ttf"); 
-}
 
 @font-face {
   font-family: Poppins-Bold;
   src: url('https://fonts.googleapis.com/css2?family=Poppins:wght@700&display=swap'); 
 }
 
-@font-face {
-  font-family: Poppins-SemiBold;
-  src: url("C:\Users\xccvscsc\Desktop\Nuova cartella (3)\Nuova cartella\css\fonts\poppins\Poppins-SemiBold.ttf"); 
-}
+
 
 body::after {
 	content: "";
@@ -46,6 +35,11 @@ div {
 	color: white;
 	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.5), 0 6px 20px 0 rgba(0, 0, 0, 0.46);
 }
+
+div#register {
+	height: 700px;
+}
+
 img {
 	display: block;
 	margin: 15px auto;
@@ -66,8 +60,21 @@ form {
 ::placeholder {
 color:white}
 
-
-
+input[type=text] {
+	font-family: sans-serif;
+	font-size: 18px;
+	display: block;
+	width: 80%;
+	padding: 12px 20px;
+	margin: 45px auto;
+	background: none;
+	border: none;
+	border-bottom: 3px solid #778899;
+	box-sizing: border-box;
+	outline: none;
+	color:white;
+	transition: border-bottom 0.8s ease-in-out;
+  }
 
 input[type=email] {
   font-family: sans-serif;
@@ -83,6 +90,13 @@ input[type=email] {
   outline: none;
   color:white;
   transition: border-bottom 0.8s ease-in-out;
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover, 
+input:-webkit-autofill:focus, 
+input:-webkit-autofill:active  {
+    -webkit-box-shadow: 0 0 0 30px white inset !important;
 }
 
 input[type=password] {
@@ -106,8 +120,6 @@ input:focus {
 input:focus::placeholder {
 	color: transparent;
 }
-
-
 
 button[type=submit] {
   display: block;
@@ -142,4 +154,21 @@ a {
 a:link {
 	color: white;
 	text-decoration: none;
+}
+
+a:visited { 
+  	text-decoration: none; color:white; 
+}
+
+h4.error {
+	color: #ff7b25;
+	position: absolute;
+	margin-top: -40px;	
+	margin-left: 70px;
+	font-size: 22px;
+	font-weight: 900;
+}
+
+input:invalid {
+	border-bottom: 3px solid red;
 }

@@ -10,12 +10,18 @@ const users = []
 const name = []
 const email = []
 const password = []
+let err_msg_psw = ''
+let err_msg_mail = ''
+let err_msg_campi = ''
+let temp_email = ''
 
 const { connect } = require('http2');
 const mysql = require('mysql');
 const e = require('express');
+const { request } = require('http');
 
 app.use(express.static("public"));
+app.use(express.static("js"));
 
 const con = mysql.createConnection({
     host: 'app-agri.cwq3tqmj1f1n.eu-central-1.rds.amazonaws.com',
@@ -63,7 +69,7 @@ app.use((req, res, next) => {
 
 app.get('/', (req, res) => {
     if (req.session.authenticated) res.redirect('/home')
-    else res.render('login.ejs');
+    else res.redirect('/login')
 })
 
 app.get('/error', (req, res) => {
@@ -77,7 +83,7 @@ app.get('/login', (req, res) => {
 
 app.get('/home', (req, res, next) => {
     if (req.session.authenticated) res.render('home.ejs');
-    else res.redirect('/error');
+    else res.redirect('/login');
 })
 
 
@@ -86,18 +92,16 @@ app.post('/login', (req, res) => {
     function loggati() {
         const email = req.body.email
         const password = req.body.password
-        if (email && password) {
-           /* if (req.session.authenticated) {
-                res.json(req.session);
-            } else {*/
-                con.connect(function (err) {
-                    console.log('Connesso al DB!')
-                    const checkMail = `SELECT email FROM login WHERE email = '${email}' AND email IS NOT NULL`
-                    con.query(checkMail, function (err, emailCheck) {
-                        if (emailCheck[0] === undefined) {
-                            res.redirect('/error')
-                            console.log('>> email non esiste <<')
-                        } else {
+        if (email) {
+            con.connect(function (err) {
+                console.log('Connesso al DB!')
+                const checkMail = `SELECT email FROM login WHERE email = '${email}' AND email IS NOT NULL`
+                con.query(checkMail, function (err, emailCheck) {
+                    if (emailCheck[0] === undefined && password) {
+                        err_msg_mail = "L'Email inserita non è presente nel DB."
+                        return res.render('login.ejs', { err_msg_mail: err_msg_mail });
+                    } else {
+                        if (password) {
                             const login = `SELECT password FROM login WHERE email = '${email}' AND email IS NOT NULL`
                             con.query(login, function (err, result) {
                                 if (result[0].password) {
@@ -108,18 +112,35 @@ app.post('/login', (req, res) => {
                                             req.session.user = {
                                                 email, password
                                             };
-                                            res.redirect('/home')
+                                            //res.redirect('/home')
+                                            res.render('welcome.ejs')
                                         } else {
-                                            res.redirect('/error')
+                                            temp_email = req.body.email;
+                                            err_msg_psw = "La password inserita non è valida.";
+                                            return res.render('login.ejs', { err_msg_psw: err_msg_psw, temp_email: temp_email });
                                         }
                                     })
                                 }
                             })
+                        } else {
+                            temp_email = req.body.email;
+                            console.log('psw manca');
+                            err_msg_psw = "inserire una password";
+                            return res.render('login.ejs', { err_msg_psw: err_msg_psw, temp_email: temp_email });
                         }
-                    })
+                    }
                 })
-           // }
-        } else res.redirect('/error');
+            })
+        } else {
+            if (password) {
+                err_msg_mail = 'Inserire la mail';
+                return res.render('login.ejs', { err_msg_mail: err_msg_mail });
+            } else {
+                err_msg_campi = 'Compilare entrambi i campi'
+                return res.render('login.ejs', { err_msg_campi: err_msg_campi });
+            }
+
+        }
     } loggati();
 })
 
@@ -134,6 +155,20 @@ app.post('/register', (req, res) => {
             const hashedPassword = await bcrypt.hash(req.body.password, 10)
             const name = req.body.name
             const email = req.body.email
+            const pass_check = req.body.password
+            const numbers = /[0-9]/g;
+            var upperCaseLetters = /[A-Z]/g;
+            var lowerCaseLetters = /[a-z]/g;
+            console.log(pass_check.length)
+            if (pass_check.length < 7 || pass_check.length > 16) {
+                console.log('password lunga o corta')
+            } else {
+                if (pass_check.match(numbers) && pass_check.match(upperCaseLetters) && pass_check.match(lowerCaseLetters) && !(/\s/.test(pass_check))) {
+                    console.log('password ok!')
+                } else {
+                    console.log('password errata')
+                }
+            }
             const check_email = `SELECT email FROM login WHERE email = '${email}'`
             pool.query(check_email, function (err, result1) {
                 if (result1[0] != undefined) {
@@ -150,37 +185,17 @@ app.post('/register', (req, res) => {
 
                     })
                     res.redirect('/login')
-                    console.log('Inserisco dati a DB!') 
+                    console.log('Inserisco dati a DB!')
                 }
             })
+
         } catch {
             res.redirect('/register')
         }
     }
     registra()
-
 });
 
-/*
-function validateCookie(req, res, next) {
-    const { cookies } = req;
-    if('session_id' in cookies) {
-        console.log('Session ID exists.');
-        if (cookies.session_id === '123456') next();
-        else res.status(403).send({ msg: 'Non autorizzato' });
-    }   else {
-        res.status(403).send({ msg: 'Non autorizzato' });
-    }
-    next();
-}
-*/
-
-/*
-app.get('/loggato', validateCookie,(req, res) => {
-    res.status(200).json({ msg: 'sei dentro' });
-});
-*/
-
-const port = process.env.port || 3000;
+const port = process.env.port || 8080;
 
 app.listen(port)
