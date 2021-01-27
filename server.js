@@ -103,17 +103,15 @@ app.post('/login', (req, res) => {
         const email = req.body.email
         const password = req.body.password
         if (email) {
-            con.connect(function (err) {
-                console.log('Connesso al DB!')
                 const checkMail = `SELECT email FROM login WHERE email = '${email}' AND email IS NOT NULL`
-                con.query(checkMail, function (err, emailCheck) {
+                pool.query(checkMail, function (err, emailCheck) {
                     if (emailCheck[0] === undefined && password) {
                         err_msg_mail = "L'Email inserita non è presente nel DB."
                         return res.render('login.ejs', { err_msg_mail: err_msg_mail });
                     } else {
                         if (password) {
                             const login = `SELECT password FROM login WHERE email = '${email}' AND email IS NOT NULL`
-                            con.query(login, function (err, result) {
+                            pool.query(login, function (err, result) {
                                 if (result[0].password) {
                                     bcrypt.compare(password, result[0].password, function (err, result) {
                                         if (result) {
@@ -141,7 +139,6 @@ app.post('/login', (req, res) => {
                         }
                     }
                 })
-            })
         } else {
             if (password) {
                 err_msg_mail = 'Inserire la mail';
