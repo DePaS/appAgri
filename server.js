@@ -1,6 +1,7 @@
 const express = require('express')
 const app = module.exports = express()
 const bcrypt = require('bcryptjs')
+
 const session = require('express-session');
 //const cookieParser = require('cookie-parser')
 const MySQLStore = require('express-mysql-session')(session);
@@ -25,6 +26,13 @@ const e = require('express');
 
 app.use(express.static("public"));
 //app.use(express.static("js"));
+
+const con = mysql.createPool({
+    host: 'app-agri.cwq3tqmj1f1n.eu-central-1.rds.amazonaws.com',
+    user: 'depas',
+    password: 'f23L;-nO',
+    database: 'agri'
+})
 
 const pool = mysql.createPool({
     connectionLimit: 100,
@@ -87,6 +95,7 @@ app.post('/login', (req, res) => {
     function loggati() {
         const email = req.body.email
         const password = req.body.password
+        con.connect(function(err){
         if (email) {
                 const checkMail = `SELECT email FROM login WHERE email = '${email}' AND email IS NOT NULL`
                 pool.query(checkMail, function (err, emailCheck) {
@@ -134,6 +143,7 @@ app.post('/login', (req, res) => {
             }
 
         } 
+    })
     } loggati();
 })
         
