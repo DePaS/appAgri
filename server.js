@@ -21,7 +21,7 @@ let success = ''
 const { connect } = require('http2');
 const mysql = require('mysql');
 const e = require('express');
-const { request } = require('http');
+//const { request } = require('http');
 
 app.use(express.static("public"));
 app.use(express.static("js"));
@@ -54,6 +54,7 @@ app.use(session({
     resave: false,
     saveUninitialized: false
 }));
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
