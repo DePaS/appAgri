@@ -14,6 +14,9 @@ let err_msg_psw = ''
 let err_msg_mail = ''
 let err_msg_campi = ''
 let temp_email = ''
+let temp_user = ''
+let err_msg_user = ''
+let success = ''
 
 const { connect } = require('http2');
 const mysql = require('mysql');
@@ -50,7 +53,7 @@ const sessionStore = new MySQLStore(options);
 app.use('/static', express.static(path.join(__dirname, 'public')))
 
 app.set('view-engine', 'ejs')
-//app.use(cookieParser());
+
 app.use(session({
     secret: 'session_cookie_secret',
     cookie: { maxAge: 300000 },
@@ -72,8 +75,13 @@ app.get('/', (req, res) => {
     else res.redirect('/login')
 })
 
-app.get('/error', (req, res) => {
-    res.render('error.ejs');
+app.get('/register', (req, res) => {
+    success = 'Registrazione già effettuata! Sarai '
+    if (req.session.authenticated) {
+        success = 'Sei già loggato, sarai portato alla home!'
+        res.render('welcome.ejs', {success: success})
+    }
+    else res.render('register.ejs');
 })
 
 app.get('/login', (req, res) => {
@@ -85,6 +93,8 @@ app.get('/home', (req, res, next) => {
     if (req.session.authenticated) res.render('home.ejs');
     else res.redirect('/login');
 })
+
+
 
 
 
@@ -113,7 +123,8 @@ app.post('/login', (req, res) => {
                                                 email, password
                                             };
                                             //res.redirect('/home')
-                                            res.render('welcome.ejs')
+                                            success = 'Login avvenuto con successo, benvenuto!'
+                                            res.render('welcome.ejs', { success: success });
                                         } else {
                                             temp_email = req.body.email;
                                             err_msg_psw = "La password inserita non è valida.";
@@ -159,35 +170,115 @@ app.post('/register', (req, res) => {
             const numbers = /[0-9]/g;
             var upperCaseLetters = /[A-Z]/g;
             var lowerCaseLetters = /[a-z]/g;
+            var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+            let validUser = 'non_valido';
+            let validEmail = 'non_valido';
+            let validPassword = 'non_valido';
             console.log(pass_check.length)
+            if (name.length > 2 && name.length < 15) {
+                validUser = 'valido'
+            }
+            if (email.match(re)) {
+                validEmail = 'valido'
+            } else {
+                console.log('email non valida')
+            }
             if (pass_check.length < 7 || pass_check.length > 16) {
                 console.log('password lunga o corta')
             } else {
                 if (pass_check.match(numbers) && pass_check.match(upperCaseLetters) && pass_check.match(lowerCaseLetters) && !(/\s/.test(pass_check))) {
-                    console.log('password ok!')
+                    validPassword = 'valido'
                 } else {
                     console.log('password errata')
                 }
             }
-            const check_email = `SELECT email FROM login WHERE email = '${email}'`
-            pool.query(check_email, function (err, result1) {
-                if (result1[0] != undefined) {
-                    if (result1[0].email == email) {
-                        res.redirect('/error')
-                        console.log('stessa mail')
+            if (name && email && pass_check) {
+                if ((validUser == 'valido') && (validEmail == 'valido') && (validPassword == 'valido')) {
+                    const check_email = `SELECT email FROM login WHERE email = '${email}'`
+                    pool.query(check_email, function (err, result1) {
+                        if (result1[0] != undefined) {
+                            if (result1[0].email == email) {
+                                res.redirect('/error')
+                                console.log('stessa mail')
+                            }
+                        }
+                        else {
+                            const register = `INSERT INTO login (user, email, password, idlogin) VALUES ('${name}', '${email}', '${hashedPassword}', '1234');`
+                            pool.query(register, function (err, result2) {
+                                if (err) throw err
+                            })
+                            success = 'Registrazione avvenuta con successo, benvenuto!'
+                            res.render('welcome.ejs', { success: success });
+                            console.log('Inserisco dati a DB!')
+                        }
+                    })
+                } else {
+                    if ((validUser != 'valido') && (validEmail != 'valido')) {
+                        err_msg_user = "L'username deve avere lunghezza compresa tra 6 e 15 caratteri"
+                        err_msg_mail = "Controllare correttezza formale E-Mail"
+                        err_msg_psw = "La password deve avere lunghezza compresa tra 8 e 16 caratteri e contenere almeno una A, a e un numero"
+                        temp_email = req.body.email
+                        temp_user = req.body.name
+                        if (validPassword != 'valido') {
+                            return res.render('register.ejs', { err_msg_user: err_msg_user, err_msg_mail: err_msg_mail, err_msg_psw: err_msg_psw, temp_email: temp_email, temp_user: temp_user });
+                        } else {
+                            return res.render('register.ejs', { err_msg_user: err_msg_user, err_msg_mail: err_msg_mail, temp_email: temp_email, temp_user: temp_user });
+                        }
+                    } else if ((validUser != 'valido') && (validEmail == 'valido')) {
+                        err_msg_user = "L'username deve avere lunghezza compresa tra 6 e 15 caratteri"
+                        err_msg_mail = "Controllare correttezza formale E-Mail"
+                        temp_email = req.body.email
+                        return res.render('register.ejs', { err_msg_user: err_msg_user, temp_email: temp_email });
+                    } else if ((validUser == 'valido') && (validEmail != 'valido')) {
+                        temp_user = req.body.name
+                        err_msg_user = "L'username deve avere lunghezza compresa tra 6 e 15 caratteri"
+                        err_msg_mail = "Controllare correttezza formale E-Mail"
+                        return res.render('register.ejs', { err_msg_mail: err_msg_mail, temp_user: temp_user });
+                    } else if ((validUser == 'valido') && (validEmail == 'valido')) {
+                        err_msg_psw = "La password deve avere lunghezza compresa tra 8 e 16 caratteri e contenere almeno una A, a e un numero"
+                        temp_user = req.body.name
+                        temp_email = req.body.email
+                        if (validPassword != 'valido') {
+                            return res.render('register.ejs', { err_msg_psw: err_msg_psw, temp_user: temp_user, temp_email: temp_email });
+                        }
                     }
                 }
-                else {
-                    const register = `INSERT INTO login (user, email, password, idlogin) VALUES ('${name}', '${email}', '${hashedPassword}', '1234');`
-                    pool.query(register, function (err, result2) {
-                        if (err) throw err
-                        console.log(result2)
-
-                    })
-                    res.redirect('/login')
-                    console.log('Inserisco dati a DB!')
+            } else {
+                if (name && email && !pass_check) {
+                    err_msg_psw = "Campo obbligatorio"
+                    temp_user = req.body.name
+                    temp_email = req.body.email
+                    return res.render('register.ejs', { err_msg_psw: err_msg_psw, temp_user: temp_user, temp_email: temp_email });
+                } else if (name && !email && !pass_check) {
+                    err_msg_psw = "Campo obbligatorio"
+                    err_msg_mail = "Campo obbligatorio"
+                    temp_user = req.body.name
+                    return res.render('register.ejs', { err_msg_psw: err_msg_psw, err_msg_mail: err_msg_mail, temp_user: temp_user });
+                } else if (!name && email && !pass_check) {
+                    err_msg_psw = "Campo obbligatorio"
+                    err_msg_user = "Campo obbligatorio"
+                    temp_email = req.body.email
+                    return res.render('register.ejs', { err_msg_psw: err_msg_psw, err_msg_user: err_msg_user, temp_email: temp_email });
+                } else if (!name && !email && pass_check) {
+                    err_msg_mail = "Campo obbligatorio"
+                    err_msg_user = "Campo obbligatorio"
+                    return res.render('register.ejs', { err_msg_mail: err_msg_mail, err_msg_user: err_msg_user });
+                } else if (!name && email && pass_check) {
+                    err_msg_user = "Campo obbligatorio"
+                    temp_email = req.body.email
+                    return res.render('register.ejs', { err_msg_user: err_msg_user, temp_email: temp_email });
+                } else if (name && !email && pass_check) {
+                    err_msg_mail = "Campo obbligatorio"
+                    temp_user = req.body.name
+                    return res.render('register.ejs', { err_msg_mail: err_msg_mail, temp_user: temp_user });
+                } else if (!name && !email && !pass_check) {
+                    err_msg_psw = "Campo obbligatorio"
+                    err_msg_mail = "Campo obbligatorio"
+                    err_msg_user = "Campo obbligatorio"
+                    return res.render('register.ejs', { err_msg_psw: err_msg_psw, err_msg_mail: err_msg_mail, err_msg_user: err_msg_user });
                 }
-            })
+            }
+
 
         } catch {
             res.redirect('/register')

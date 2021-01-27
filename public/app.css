@@ -142,13 +142,27 @@ button[type=submit]:hover {
   background-color: rgb(80, 140, 190);
   color: white;
 }
+
+.nav {
+	background: none;
+	list-style-type: none;
+	text-align: center;
+	margin:0;
+	padding: 0;
+}
+
+.nav li {
+	display: inline-block;
+	
+	padding: 40px;
+	padding-top: 30px;
+}
+
+	
+
 a {
 	font-family: sans-serif;
 	font-size: 14px;
-	display: inline-block;
-	margin-top: 12px;
-	text-align: center;
-	padding-left: 125px;
 
 }
 a:link {

@@ -1,4 +1,8 @@
-<h4>Login avvenuto con successo...</h4>
+<% if (locals.success) { %>
+<h4>
+    <%= success %>
+</h4>
+<% } %>
 <script>
     setTimeout(function(){
         window.location = '/home';

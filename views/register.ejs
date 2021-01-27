@@ -8,12 +8,29 @@
         <img src="https://image.freepik.com/free-vector/artistic-leaf-logo-design-agriculture-company_100735-16.jpg">
         <h2>REGISTER</h2>
         <form action="/register" method="POST" id="invia" autocomplete="off">
-                <input autocomplete="new-password" type="text" id="name" name="name" placeholder="User" >
-                <input type="email" id="email" name="email" placeholder="E-Mail" >
+                <input autocomplete="new-password" type="text" id="name" name="name" placeholder="User" <% if(locals.temp_user) { %> value="<%= temp_user %>" <% } %>>
+                <% if(locals.err_msg_user) { %>
+                    <h4 class="error" id="mail-err">
+                        <%= err_msg_user %>
+                    </h4>
+                    <% } %>
+                <input type="text" id="email" name="email" placeholder="E-Mail" <% if(locals.temp_email) { %> value="<%= temp_email %>" <% } %>>
+                <% if(locals.err_msg_mail) { %>
+                    <h4 class="error" id="mail-err">
+                        <%= err_msg_mail %>
+                    </h4>
+                    <% } %>
                 <input type="password" id="password" name="password" placeholder="Password">
+                <% if(locals.err_msg_psw) { %>
+                    <h4 class="error" id="mail-err">
+                        <%= err_msg_psw %>
+                    </h4>
+                    <% } %>
             <button type="submit">Register</button>
         </form>
-        <a href="/login">Login</a>
-        <a href="/home">Home</a>
+        <ul class="nav">
+            <li><a href="/login">Login</a></li>
+            <li><a href="/home">Home</a></li>
+        </ul>
     </div>
 </body>
