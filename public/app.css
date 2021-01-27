@@ -172,3 +172,15 @@ h4.error {
 input:invalid {
 	border-bottom: 3px solid red;
 }
+
+@media screen and (max-width: 576px) {
+	div {
+	  max-width: 87%;
+  }
+  }
+  
+  @media screen and (max-device-width: 480px) {
+	div {
+	  max-width: 87%;
+  }
+  }
