@@ -27,7 +27,7 @@ app.use(express.static("public"));
 app.use(express.static("js"));
 
 const pool = mysql.createPool({
-    connectionLimit: 1,
+    connectionLimit: 100,
     host: 'app-agri.cwq3tqmj1f1n.eu-central-1.rds.amazonaws.com',
     user: 'depas',
     password: 'f23L;-nO',
@@ -132,10 +132,10 @@ app.post('/login', (req, res) => {
                 return res.render('login.ejs', { err_msg_campi: err_msg_campi });
             }
 
-        }
+        } 
     } loggati();
 })
-
+        
 
 app.get('/register', (req, res) => {
     res.render('register.ejs');
