@@ -24,7 +24,7 @@ const e = require('express');
 //const { request } = require('http');
 
 app.use(express.static("public"));
-app.use(express.static("js"));
+//app.use(express.static("js"));
 
 const pool = mysql.createPool({
     connectionLimit: 100,
@@ -79,7 +79,7 @@ app.get('/register', (req, res) => {
 })
 
 app.get('/login', (req, res) => {
-    if (req.session.authenticated) res.redirect('/home')
+    if (req.session.authenticated) res.redirect('/')
     else res.render('login.ejs');
 })
 
