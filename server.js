@@ -26,13 +26,6 @@ const { request } = require('http');
 app.use(express.static("public"));
 app.use(express.static("js"));
 
-const con = mysql.createConnection({
-    host: 'app-agri.cwq3tqmj1f1n.eu-central-1.rds.amazonaws.com',
-    user: 'depas',
-    password: 'f23L;-nO',
-    database: 'agri'
-})
-
 const pool = mysql.createPool({
     connectionLimit: 1,
     host: 'app-agri.cwq3tqmj1f1n.eu-central-1.rds.amazonaws.com',
@@ -71,7 +64,7 @@ app.use((req, res, next) => {
 })*/
 
 app.get('/', (req, res) => {
-    if (req.session.authenticated) res.redirect('/home')
+    if (req.session.authenticated) res.render('home.ejs')
     else res.redirect('/login')
 })
 
@@ -87,11 +80,6 @@ app.get('/register', (req, res) => {
 app.get('/login', (req, res) => {
     if (req.session.authenticated) res.redirect('/home')
     else res.render('login.ejs');
-})
-
-app.get('/home', (req, res, next) => {
-    if (req.session.authenticated) res.render('home.ejs');
-    else res.redirect('/login');
 })
 
 app.post('/login', (req, res) => {
