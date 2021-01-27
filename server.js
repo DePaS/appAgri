@@ -94,10 +94,6 @@ app.get('/home', (req, res, next) => {
     else res.redirect('/login');
 })
 
-
-
-
-
 app.post('/login', (req, res) => {
     function loggati() {
         const email = req.body.email
