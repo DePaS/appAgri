@@ -27,7 +27,7 @@ const e = require('express');
 app.use(express.static("public"));
 //app.use(express.static("js"));
 
-const con = mysql.createPool({
+const con = mysql.createConnection({
     host: 'app-agri.cwq3tqmj1f1n.eu-central-1.rds.amazonaws.com',
     user: 'depas',
     password: 'f23L;-nO',
@@ -270,8 +270,6 @@ app.post('/register', (req, res) => {
                     return res.render('register.ejs', { err_msg_psw: err_msg_psw, err_msg_mail: err_msg_mail, err_msg_user: err_msg_user });
                 }
             }
-
-
         } catch {
             res.redirect('/register')
         }
