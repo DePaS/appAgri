@@ -1,11 +1,24 @@
 $(document).ready(function(){
     $("input#email").focus(function(){
-        $("h4#mail-err").css("display", "none");
+        $("div#mail-err").css("display", "none");
     });
     $("input#password").focus(function(){
-        $("h4#psw-err").css("display", "none");
+        $("div#psw-err").css("display", "none");
     });
     $("input").focus(function(){
-        $("h4#campi-err").css("display", "none");
+        $("div.msg_err").css("display", "none");
     });
+
 });
+
+function arrow() {
+    $(document).ready(function(){
+        $("div.arrow").animate({
+            right: "+=3px"}, 200 );
+        $("div.arrow").animate({
+            right: "-=3px"}, 200, function() {
+                arrow();
+            });
+    })
+} arrow();
+

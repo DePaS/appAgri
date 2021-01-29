@@ -38,12 +38,103 @@ div {
 	padding: 20px;
 	display: block;
 	color: white;
-	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.5), 0 6px 20px 0 rgba(0, 0, 0, 0.46);
 	overflow: hidden;
+}
+
+div#error_msg {
+	position: absolute;
+	top: 150;
+	bottom: 0;
+	left: 0;
+	right: 1100;
+	margin: auto;
+	background-color: none;
+	background-image: none;
+	height: 450px;
+	z-index: 100;
+	width: 28%;
+}
+
+div.msg_err {
+	margin: auto;
+	background-color: none;
+	background-image: none;
+	z-index: 100;
+	position: absolute;
+	height: 24px;
+	text-align: right;
+	width: fit-content;
+	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.5), 0 6px 20px 0 rgba(0, 0, 0, 0.46);
+	color: red;
+	height: fit-content;
 }
 
 div#register {
 	height: 700px;
+	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.5), 0 6px 20px 0 rgba(0, 0, 0, 0.46);
+}
+
+div.msg_err {
+	top: -170px;
+	right: 850px;
+	text-align: left;
+	float: left;
+	max-width: 250px;
+	border-bottom-right-radius: 45px;
+}
+
+#usr_arrow {
+	top: -170px;
+	left: 540;
+	background: none;
+	text-align: left;
+	width: 0;
+	border-radius: 0;
+	width: 0;
+	height: 0;
+	border-style: solid;
+	border-width: 15px 0 15px 25px;
+	border-color: transparent transparent transparent red;
+	padding: 0;
+}
+
+#usr_arrow2 {
+	top: 20px;
+	left: 540;
+	background: none;
+	text-align: left;
+	width: 0;
+	border-radius: 0;
+	width: 0;
+	height: 0;
+	border-style: solid;
+	border-width: 15px 0 15px 25px;
+	border-color: transparent transparent transparent red;
+	padding: 0;
+	z-index: 600;
+}
+
+#usr_arrow3 {
+	top: 200px;
+	left: 540;
+	background: none;
+	text-align: left;
+	width: 0;
+	border-radius: 0;
+	width: 0;
+	height: 0;
+	border-style: solid;
+	border-width: 15px 0 15px 25px;
+	border-color: transparent transparent transparent red;
+	padding: 0;
+}
+
+#mail-err {
+	top: 25px;
+}
+
+#psw-err {
+	top: 200px;
 }
 
 img {
@@ -191,24 +282,38 @@ a:visited {
 h4.error {
 	color: #ff7b25;
 	position: absolute;
-	margin-top: -40px;	
-	margin-left: 70px;
 	font-size: 22px;
 	font-weight: 900;
 }
 
 input:invalid {
 	border-bottom: 3px solid red;
+	font-size: bold;
 }
 
-@media screen and (max-width: 576px) {
-	div {
-	  max-width: 87%;
-  }
-  }
-  
-  @media screen and (max-device-width: 480px) {
-	div {
-	  max-width: 87%;
-  }
-  }
+.msg_err_mobile {
+	color: orange;
+	display: none;
+	font-size: 10px;
+	padding: 0;
+	position:absolute;
+	width: fit-content;
+	height: fit-content;
+	right: 320px;
+}
+
+#msg_mob_1 {
+	top: 310px;
+}
+
+#msg_mob_2 {
+	top: 405;
+}
+
+#msg_mob_3 {
+	top: 495px;
+}
+
+
+
+
