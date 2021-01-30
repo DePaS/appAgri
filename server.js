@@ -75,6 +75,7 @@ app.use((req, res, next) => {
     next();
 })
 */
+
 app.get('/', (req, res) => {
     if (req.session.authenticated) res.render('home.ejs')
     else res.redirect('/login')
@@ -159,7 +160,7 @@ app.get('/register', (req, res) => {
     res.render('register.ejs');
 })
 
-
+/*
 app.post('/register', (req, res) => {
     async function registra() {
         try {
@@ -321,7 +322,7 @@ app.post('/register', (req, res) => {
 
 
 });
-
+*/
 const port = process.env.port || 8080;
 
 app.listen(port) 
