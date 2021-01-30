@@ -81,14 +81,18 @@ app.get('/', (req, res) => {
     else res.redirect('/login')
 })
 
+/*
 app.get('/register', (req, res) => {
-    success = 'Registrazione già effettuata! Sarai '
+    res.render('register.ejs');
+    
     if (req.session.authenticated) {
         success = 'Sei già loggato, sarai portato alla home!'
         res.render('welcome.ejs', { success: success })
     }
     else res.render('register.ejs');
+    
 })
+*/
 
 app.get('/login', (req, res) => {
     if (req.session.authenticated) res.redirect('/')
@@ -99,7 +103,7 @@ app.get('/home', (req, res, next) => {
     if (req.session.authenticated) res.render('home.ejs');
     else res.redirect('/');
 })
-
+/*
 app.post('/login', (req, res) => {
     function loggati() {
         const email = req.body.email
@@ -155,7 +159,7 @@ app.post('/login', (req, res) => {
     } loggati();
 })
 
-
+*/
 app.get('/register', (req, res) => {
     res.render('register.ejs');
 })
