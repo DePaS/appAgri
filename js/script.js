@@ -11,14 +11,4 @@ $(document).ready(function(){
 
 });
 
-function arrow() {
-    $(document).ready(function(){
-        $("div.arrow").animate({
-            right: "+=3px"}, 200 );
-        $("div.arrow").animate({
-            right: "-=3px"}, 200, function() {
-                arrow();
-            });
-    })
-} arrow();
 
