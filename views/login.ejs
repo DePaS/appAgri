@@ -3,7 +3,7 @@
     <script src="script.js"></script>
     <link rel='stylesheet' href='/app.css' />
     <link rel='stylesheet' href='/media_query.css' />
-    <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="viewport" content="initial-scale=0.85, maximum-scale=0.85, user-scalable=no" />
 </head>
 
 <body>
@@ -22,7 +22,7 @@
                                     src="https://image.freepik.com/free-vector/artistic-leaf-logo-design-agriculture-company_100735-16.jpg">
                                 <h2>LOGIN</h2>
                                 <form action="/login" method="POST" id="invia" autocomplete="off">
-                                    <input type="text" id="email" name="email" placeholder="Username"
+                                    <input type="text" id="email" name="email" placeholder="E-Mail"
                                         autocomplete="false" <% if(locals.temp_email) { %> value="<%= temp_email %>" <%
                                             } %>>
                                                 <% if(locals.err_msg_mail) { %>

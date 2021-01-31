@@ -4,6 +4,7 @@ const bcrypt = require('bcryptjs')
 const session = require('express-session');
 const MySQLStore = require('express-mysql-session')(session);
 const path = require('path');
+const saltRounds = 10;
 
 require('dotenv').config()
 
@@ -61,7 +62,6 @@ app.use(session({
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-
 /*
 app.use((req, res, next) => {
     console.log(req.method);
@@ -97,54 +97,69 @@ app.post('/login', (req, res) => {
     function loggati() {
         const email = req.body.email
         const password = req.body.password
-        con.connect(function (err) {
-            if (email) {
-                const checkMail = `SELECT email FROM login WHERE email = '${email}' AND email IS NOT NULL`
-                con.query(checkMail, function (err, emailCheck) {
-                    if (emailCheck[0] === undefined && password) {
-                        err_msg_mail = "L'Email inserita non è presente nel DB."
+        var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        if (email.match(re)) {
+            con.connect(function (err) {
+                if (email) {
+                    //const checkMail = "SELECT email FROM login WHERE email = ? AND email IS NOT NULL"
+                    con.query("SELECT email FROM login WHERE email = ? AND email IS NOT NULL", [email], function (err, emailCheck) {
+                        if (emailCheck[0] === undefined && password) {
+                            err_msg_mail = "L'Email inserita non è presente nel DB."
+                            return res.render('login.ejs', { err_msg_mail: err_msg_mail });
+                        } else {
+                            if (password) {
+                                //const login = `SELECT password FROM login WHERE email = ? AND email IS NOT NULL`, [email]
+                                con.query(`SELECT password FROM login WHERE email = ? AND email IS NOT NULL`, [email], function (err, result) {
+                                    if (result[0].password) {
+                                        bcrypt.compare(password, result[0].password, function (err, result) {
+                                            if (result) {
+                                                console.log('>> ' + password + ' <<')
+                                                req.session.authenticated = true;
+                                                req.session.user = {
+                                                    email, password
+                                                };
+                                                success = 'Login avvenuto con successo, benvenuto!'
+                                                res.render('welcome.ejs', { success: success });
+                                            } else {
+                                                temp_email = req.body.email;
+                                                err_msg_psw = "La password inserita non è valida.";
+                                                return res.render('login.ejs', { err_msg_psw: err_msg_psw, temp_email: temp_email });
+                                            }
+                                        })
+                                    }
+                                })
+                            } else {
+                                temp_email = req.body.email;
+                                err_msg_psw = "inserire una password";
+                                return res.render('login.ejs', { err_msg_psw: err_msg_psw, temp_email: temp_email });
+                            }
+                        }
+                    })
+                } else {
+                    if (password) {
+                        err_msg_mail = 'Inserire la mail';
                         return res.render('login.ejs', { err_msg_mail: err_msg_mail });
                     } else {
-                        if (password) {
-                            //const login = `SELECT password FROM login WHERE email = ? AND email IS NOT NULL`, [email]
-                            con.query(`SELECT password FROM login WHERE email = ? AND email IS NOT NULL`, [email], function (err, result) {
-                                if (result[0].password) {
-                                    bcrypt.compare(password, result[0].password, function (err, result) {
-                                        if (result) {
-                                            console.log('>> ' + password + ' <<')
-                                            req.session.authenticated = true;
-                                            req.session.user = {
-                                                email, password
-                                            };
-                                            success = 'Login avvenuto con successo, benvenuto!'
-                                            res.render('welcome.ejs', { success: success });
-                                        } else {
-                                            temp_email = req.body.email;
-                                            err_msg_psw = "La password inserita non è valida.";
-                                            return res.render('login.ejs', { err_msg_psw: err_msg_psw, temp_email: temp_email });
-                                        }
-                                    })
-                                }
-                            })
-                        } else {
-                            temp_email = req.body.email;
-                            err_msg_psw = "inserire una password";
-                            return res.render('login.ejs', { err_msg_psw: err_msg_psw, temp_email: temp_email });
-                        }
+                        err_msg_mail = 'Campo Obbligatorio';
+                        err_msg_psw = "Campo Obbligatorio";
+                        return res.render('login.ejs', { err_msg_psw: err_msg_psw, err_msg_mail: err_msg_mail });
                     }
-                })
-            } else {
-                if (password) {
-                    err_msg_mail = 'Inserire la mail';
-                    return res.render('login.ejs', { err_msg_mail: err_msg_mail });
-                } else {
-                    err_msg_mail = 'Campo Obbligatorio';
-                    err_msg_psw = "Campo Obbligatorio";
-                    return res.render('login.ejs', { err_msg_psw: err_msg_psw, err_msg_mail: err_msg_mail });
-                }
 
+                }
+            })
+        } else {
+            if (email) {
+                err_msg_mail = "L'E-Mail inserita non è valida";
+                return res.render('login.ejs', { err_msg_mail: err_msg_mail });
+            } else if (!password) {
+                err_msg_mail = 'Campo Obbligatorio';
+                err_msg_psw = "Campo Obbligatorio";
+                return res.render('login.ejs', { err_msg_psw: err_msg_psw, err_msg_mail: err_msg_mail });
+            } else {
+                err_msg_mail = 'Campo Obbligatorio';
+                return res.render('login.ejs', { err_msg_mail: err_msg_mail });
             }
-        })
+        }
     } loggati();
 })
 
@@ -158,6 +173,7 @@ app.post('/register', (req, res) => {
     async function registra() {
         try {
             const hashedPassword = await bcrypt.hash(req.body.password, 10)
+            console.log(hashedPassword)
             const name = req.body.name
             const email = req.body.email
             const pass_check = req.body.password
@@ -202,7 +218,7 @@ app.post('/register', (req, res) => {
                                 email_check = false;
                                 resolve('ez21')
                                 //const register = "INSERT INTO login (user, email, password, idlogin) VALUES (?, ?, ?, '1234');"
-                                pool.query("INSERT INTO login (user, email, password) VALUES (?, ?, ?);" , [
+                                pool.query("INSERT INTO login (user, email, password) VALUES (?, ?, ?);", [
                                     name,
                                     email,
                                     hashedPassword
@@ -221,7 +237,7 @@ app.post('/register', (req, res) => {
                                 if (username[0].user == name) {
                                     user_check = true;
                                     resolve('ez')
-                                } 
+                                }
                             } else {
                                 user_check = false;
                                 resolve('ez21')
@@ -235,15 +251,15 @@ app.post('/register', (req, res) => {
                             err_msg_user = "L'username inserito è già registrato"
                             err_msg_mail = "L'E-mail inserita è già registrata"
                             res.render('register.ejs', { err_msg_user: err_msg_user, err_msg_mail: err_msg_mail })
-                        } 
+                        }
                         if (user_check && !email_check) {
                             err_msg_user = "L'username inserito è già registrato"
                             res.render('register.ejs', { err_msg_user: err_msg_user })
-                        } 
+                        }
                         if (!user_check && email_check) {
                             err_msg_mail = "L'E-mail inserita è già registrata"
                             res.render('register.ejs', { err_msg_mail: err_msg_mail })
-                        } 
+                        }
                     })
                 } else {
                     if ((validUser != 'valido') && (validEmail != 'valido')) {
