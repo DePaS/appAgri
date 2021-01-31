@@ -1,11 +1,7 @@
-
-
 @font-face {
   font-family: Poppins-Bold;
   src: url('https://fonts.googleapis.com/css2?family=Poppins:wght@700&display=swap'); 
 }
-
-
 
 body::after {
 	content: "";
@@ -67,15 +63,32 @@ div.msg_err {
 	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.5), 0 6px 20px 0 rgba(0, 0, 0, 0.46);
 	color: red;
 	height: fit-content;
+	top: -170px;
+	right: 850px;
+	text-align: left;
+	float: left;
+	max-width: 250px;
+	border-bottom-right-radius: 45px;
 }
+
 
 div#register {
 	height: 700px;
 	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.5), 0 6px 20px 0 rgba(0, 0, 0, 0.46);
 }
 
-div.msg_err {
-	top: -170px;
+div.msg_err_lgn {
+	margin: auto;
+	background-color: none;
+	background-image: none;
+	z-index: 100;
+	position: absolute;
+	height: 24px;
+	text-align: right;
+	width: fit-content;
+	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.5), 0 6px 20px 0 rgba(0, 0, 0, 0.46);
+	color: red;
+	height: fit-content;
 	right: 850px;
 	text-align: left;
 	float: left;
@@ -131,6 +144,14 @@ div.msg_err {
 
 #mail-err {
 	top: 25px;
+}
+
+#mail-err_lgn {
+	top: -80px;
+}
+
+#psw-err-lgn {
+	top: 105px;
 }
 
 #psw-err {
@@ -300,18 +321,22 @@ input:invalid {
 	width: fit-content;
 	height: fit-content;
 	right: 320px;
+	text-align: left;
 }
 
 #msg_mob_1 {
 	top: 310px;
+	left: 80px;
 }
 
 #msg_mob_2 {
 	top: 405;
+	left: 80px;
 }
 
 #msg_mob_3 {
 	top: 495px;
+	left: 80px;
 }
 
 

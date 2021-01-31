@@ -1,20 +1,14 @@
 const express = require('express')
 const app = module.exports = express()
 const bcrypt = require('bcryptjs')
-
 const session = require('express-session');
-//const cookieParser = require('cookie-parser')
 const MySQLStore = require('express-mysql-session')(session);
 const path = require('path');
 
-const users = []
-const name = []
-const email = []
-const password = []
+require('dotenv').config()
 
 let err_msg_psw = ''
 let err_msg_mail = ''
-let err_msg_campi = ''
 let temp_email = ''
 let temp_user = ''
 let err_msg_user = ''
@@ -24,31 +18,30 @@ let user_check = false
 
 const { connect } = require('http2');
 const mysql = require('mysql');
-//const e = require('express');
 
 app.use(express.static("public"));
 app.use(express.static("js"));
 
 const con = mysql.createConnection({
-    host: 'app-agri.cwq3tqmj1f1n.eu-central-1.rds.amazonaws.com',
-    user: 'depas',
-    password: 'f23L;-nO',
-    database: 'agri'
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASS,
+    database: process.env.DB_TABLE
 })
 
 const pool = mysql.createPool({
     connectionLimit: 100,
-    host: 'app-agri.cwq3tqmj1f1n.eu-central-1.rds.amazonaws.com',
-    user: 'depas',
-    password: 'f23L;-nO',
-    database: 'agri'
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASS,
+    database: process.env.DB_TABLE
 })
 
 const options = {
-    host: 'app-agri.cwq3tqmj1f1n.eu-central-1.rds.amazonaws.com',
-    user: 'depas',
-    password: 'f23L;-nO',
-    database: 'agri'
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASS,
+    database: process.env.DB_TABLE
 }
 
 const sessionStore = new MySQLStore(options);
@@ -81,18 +74,14 @@ app.get('/', (req, res) => {
     else res.redirect('/login')
 })
 
-/*
+
 app.get('/register', (req, res) => {
-    res.render('register.ejs');
-    
     if (req.session.authenticated) {
         success = 'Sei già loggato, sarai portato alla home!'
         res.render('welcome.ejs', { success: success })
     }
     else res.render('register.ejs');
-    
 })
-*/
 
 app.get('/login', (req, res) => {
     if (req.session.authenticated) res.redirect('/')
@@ -103,7 +92,7 @@ app.get('/home', (req, res, next) => {
     if (req.session.authenticated) res.render('home.ejs');
     else res.redirect('/');
 })
-/*
+
 app.post('/login', (req, res) => {
     function loggati() {
         const email = req.body.email
@@ -117,8 +106,8 @@ app.post('/login', (req, res) => {
                         return res.render('login.ejs', { err_msg_mail: err_msg_mail });
                     } else {
                         if (password) {
-                            const login = `SELECT password FROM login WHERE email = '${email}' AND email IS NOT NULL`
-                            con.query(login, function (err, result) {
+                            //const login = `SELECT password FROM login WHERE email = ? AND email IS NOT NULL`, [email]
+                            con.query(`SELECT password FROM login WHERE email = ? AND email IS NOT NULL`, [email], function (err, result) {
                                 if (result[0].password) {
                                     bcrypt.compare(password, result[0].password, function (err, result) {
                                         if (result) {
@@ -127,7 +116,6 @@ app.post('/login', (req, res) => {
                                             req.session.user = {
                                                 email, password
                                             };
-                                            //res.redirect('/home')
                                             success = 'Login avvenuto con successo, benvenuto!'
                                             res.render('welcome.ejs', { success: success });
                                         } else {
@@ -150,8 +138,9 @@ app.post('/login', (req, res) => {
                     err_msg_mail = 'Inserire la mail';
                     return res.render('login.ejs', { err_msg_mail: err_msg_mail });
                 } else {
-                    err_msg_campi = 'Compilare entrambi i campi'
-                    return res.render('login.ejs', { err_msg_campi: err_msg_campi });
+                    err_msg_mail = 'Campo Obbligatorio';
+                    err_msg_psw = "Campo Obbligatorio";
+                    return res.render('login.ejs', { err_msg_psw: err_msg_psw, err_msg_mail: err_msg_mail });
                 }
 
             }
@@ -159,12 +148,12 @@ app.post('/login', (req, res) => {
     } loggati();
 })
 
-*/
+
 app.get('/register', (req, res) => {
     res.render('register.ejs');
 })
 
-/*
+
 app.post('/register', (req, res) => {
     async function registra() {
         try {
@@ -200,20 +189,24 @@ app.post('/register', (req, res) => {
             if (name && email && pass_check) {
                 if ((validUser == 'valido') && (validEmail == 'valido') && (validPassword == 'valido')) {
                     let emailPromise = new Promise(function (resolve, reject) {
-                        const check_email = `SELECT email FROM login WHERE email = '${email}'`
-                        pool.query(check_email, function (err, result1) {
+                        //const check_email = `SELECT email FROM login WHERE email = '${email}'`
+                        pool.query("SELECT email FROM login WHERE email = ?", [email], function (err, result1) {
                             if (result1[0] != undefined) {
                                 if (result1[0].email == email) {
                                     email_check = true;
                                     err_msg_mail = "L'email inserita è già registrata";
                                     resolve('bella pe noi')
-                                    res.render('register.ejs', { err_msg_mail: err_msg_mail });
+                                    //res.render('register.ejs', { err_msg_mail: err_msg_mail });
                                 }
                             } else {
                                 email_check = false;
                                 resolve('ez21')
-                                const register = `INSERT INTO login (user, email, password, idlogin) VALUES ('${name}', '${email}', '${hashedPassword}', '1234');`
-                                pool.query(register, function (err, result2) {
+                                //const register = "INSERT INTO login (user, email, password, idlogin) VALUES (?, ?, ?, '1234');"
+                                pool.query("INSERT INTO login (user, email, password) VALUES (?, ?, ?);" , [
+                                    name,
+                                    email,
+                                    hashedPassword
+                                ], function (err, result2) {
                                     if (err) throw err
                                 })
                                 success = 'Registrazione avvenuta con successo, benvenuto!'
@@ -222,8 +215,8 @@ app.post('/register', (req, res) => {
                         });
                     })
                     let userPromise = new Promise(function (resolve, reject) {
-                        const check_user = `SELECT user FROM login WHERE user = '${name}'`
-                        pool.query(check_user, function (err, username) {
+                        //const check_user = "SELECT user FROM login WHERE user = ?"
+                        pool.query("SELECT user FROM login WHERE user = ?", [name], function (err, username) {
                             if (username[0] != undefined) {
                                 if (username[0].user == name) {
                                     user_check = true;
@@ -323,10 +316,8 @@ app.post('/register', (req, res) => {
         }
     }
     registra();
+})
 
-
-});
-*/
 const port = process.env.port || 8080;
 
 app.listen(port) 

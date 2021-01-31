@@ -11,7 +11,7 @@
   }
 
 @media screen and (max-width: 1081px) {
-.arrow, .msg_err {
+.msg_err, .msg_err_lgn {
       display: none;
   }
   .msg_err_mobile {

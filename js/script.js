@@ -8,7 +8,6 @@ $(document).ready(function(){
     $("input").focus(function(){
         $("div.msg_err").css("display", "none");
     });
-
 });
 
 
