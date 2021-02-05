@@ -27,7 +27,7 @@ const mysql = require('mysql');
 
 //app.use(express.static("public"));
 //app.use(express.static("js"));
-/*
+
 const con = mysql.createConnection({
     host: process.env.DB_HOST,
     user: process.env.DB_USER,
@@ -76,14 +76,12 @@ app.use((req, res, next) => {
 */
 
 app.get('/', (req, res) => {
-    /*
     if (req.session.authenticated) res.render('home.ejs')
     else res.redirect('/login')
-    */
     res.render('login.ejs');
 })
 
-/*
+
 app.get('/register', (req, res) => {
     if (req.session.authenticated) {
         success = 'Sei già loggato, sarai portato alla home!'
@@ -97,7 +95,7 @@ app.get('/login', (req, res) => {
     else res.render('login.ejs');
 })
 
-app.get('/home', (req, res, next) => {
+app.get('/home', (req, res) => {
     if (req.session.authenticated) res.render('home.ejs');
     else res.redirect('/');
 })
@@ -342,7 +340,7 @@ app.post('/register', (req, res) => {
     }
     registra();
 })
-*/
+
 const port = process.env.port || 8080;
 
 app.listen(port) 
