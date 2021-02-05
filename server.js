@@ -74,11 +74,10 @@ app.use((req, res, next) => {
     next();
 })
 */
-/*
+
 app.get('/', (req, res) => {
     if (req.session.authenticated) res.render('home.ejs')
-    else res.redirect('/login')
-    res.render('login.ejs');
+    else res.render('login.ejs');
 })
 
 app.get('/register', (req, res) => {
@@ -93,13 +92,11 @@ app.get('/login', (req, res) => {
     if (req.session.authenticated) res.redirect('/')
     else res.render('login.ejs');
 })
-*/
-/*
-app.get('/home', (req, res, next) => {
+
+app.get('/home', (req, res) => {
     if (req.session.authenticated) res.render('home.ejs');
     else res.redirect('/');
-    next();
-}) */
+}) 
 
 app.post('/login', (req, res) => {
     function loggati() {
