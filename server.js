@@ -74,13 +74,12 @@ app.use((req, res, next) => {
     next();
 })
 */
-
+/*
 app.get('/', (req, res) => {
     if (req.session.authenticated) res.render('home.ejs')
     else res.redirect('/login')
     res.render('login.ejs');
 })
-
 
 app.get('/register', (req, res) => {
     if (req.session.authenticated) {
@@ -94,7 +93,7 @@ app.get('/login', (req, res) => {
     if (req.session.authenticated) res.redirect('/')
     else res.render('login.ejs');
 })
-
+*/
 /*
 app.get('/home', (req, res, next) => {
     if (req.session.authenticated) res.render('home.ejs');
@@ -176,7 +175,6 @@ app.post('/login', (req, res) => {
 app.get('/register', (req, res) => {
     res.render('register.ejs');
 })
-
 
 app.post('/register', (req, res) => {
     async function registra() {
