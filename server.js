@@ -5,6 +5,11 @@ const session = require('express-session');
 const MySQLStore = require('express-mysql-session')(session);
 const path = require('path');
 const saltRounds = 10;
+const optionsCache = {
+    etag: true,
+    maxAge: 31537000,
+    redirect: true
+}
 
 require('dotenv').config()
 
@@ -20,9 +25,9 @@ let user_check = false
 const { connect } = require('http2');
 const mysql = require('mysql');
 
-app.use(express.static("public"));
-app.use(express.static("js"));
-
+//app.use(express.static("public"));
+//app.use(express.static("js"));
+/*
 const con = mysql.createConnection({
     host: process.env.DB_HOST,
     user: process.env.DB_USER,
@@ -47,7 +52,8 @@ const options = {
 
 const sessionStore = new MySQLStore(options);
 
-app.use('/static', express.static(path.join(__dirname, 'public')))
+app.use(express.static(path.join(__dirname, 'public'), optionsCache));
+app.use(express.static(path.join(__dirname, 'js'), optionsCache));
 
 app.set('view-engine', 'ejs')
 
@@ -70,11 +76,14 @@ app.use((req, res, next) => {
 */
 
 app.get('/', (req, res) => {
+    /*
     if (req.session.authenticated) res.render('home.ejs')
     else res.redirect('/login')
+    */
+    res.render('login.ejs');
 })
 
-
+/*
 app.get('/register', (req, res) => {
     if (req.session.authenticated) {
         success = 'Sei già loggato, sarai portato alla home!'
@@ -333,7 +342,7 @@ app.post('/register', (req, res) => {
     }
     registra();
 })
-
+*/
 const port = process.env.port || 8080;
 
 app.listen(port) 

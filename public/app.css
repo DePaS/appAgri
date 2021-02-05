@@ -59,10 +59,10 @@ div.msg_err {
 	position: absolute;
 	height: 24px;
 	text-align: right;
+	width: -moz-fit-content;
 	width: fit-content;
 	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.5), 0 6px 20px 0 rgba(0, 0, 0, 0.46);
 	color: red;
-	height: fit-content;
 	top: -170px;
 	right: 850px;
 	text-align: left;
@@ -85,10 +85,10 @@ div.msg_err_lgn {
 	position: absolute;
 	height: 24px;
 	text-align: right;
+	width: -moz-fit-content;
 	width: fit-content;
 	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.5), 0 6px 20px 0 rgba(0, 0, 0, 0.46);
 	color: red;
-	height: fit-content;
 	right: 850px;
 	text-align: left;
 	float: left;
@@ -318,8 +318,8 @@ input:invalid {
 	font-size: 10px;
 	padding: 0;
 	position:absolute;
+	width: -moz-fit-content;
 	width: fit-content;
-	height: fit-content;
 	right: 320px;
 	text-align: left;
 }

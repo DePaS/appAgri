@@ -1,9 +1,14 @@
+<html lang="it">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>DePaS</title>
     <script src="http://code.jquery.com/jquery-3.1.0.min.js"></script>
     <link rel='stylesheet' href='/app.css' />
     <link rel='stylesheet' href='/media_query.css' />
-    <meta name="viewport" content="initial-scale=0.85, maximum-scale=0.85, user-scalable=no" />
+    
     <script src="script.js"></script>
+    
 </head>
 
 <body>
@@ -24,9 +29,10 @@
                         <% } %>
                             <div id="register">
                                 <img
-                                    src="https://image.freepik.com/free-vector/artistic-leaf-logo-design-agriculture-company_100735-16.jpg">
+                                    src="https://image.freepik.com/free-vector/artistic-leaf-logo-design-agriculture-company_100735-16.jpg" alt="/">
                                 <h2>REGISTER</h2>
                                 <form action="/register" method="POST" id="invia" autocomplete="off">
+                                    <label for="name"></label>
                                     <input autocomplete="new-password" type="text" id="name" name="name"
                                         placeholder="User" <% if(locals.temp_user) { %> value="<%= temp_user %>" <% } %>
                                             >
@@ -35,6 +41,7 @@
                                                 <%= err_msg_user %>
                                             </h4>
                                             <% } %>
+                                            <label for="email"></label>
                                             <input type="text" id="email" name="email" placeholder="E-Mail" <%
                                                 if(locals.temp_email) { %>
                                             value="<%= temp_email %>" <% } %>>
@@ -43,6 +50,7 @@
                                                         <%= err_msg_mail %>
                                                     </h4>
                                                     <% } %>
+                                                    <label for="password"></label>
                                                     <input type="password" id="password" name="password"
                                                         placeholder="Password">
                                                         <% if(locals.err_msg_psw) { %>
@@ -58,3 +66,4 @@
                                 </ul>
                             </div>
 </body>
+</html>
