@@ -95,9 +95,10 @@ app.get('/login', (req, res) => {
     else res.render('login.ejs');
 })
 
-app.get('/home', (req, res) => {
+app.get('/home', (req, res, next) => {
     if (req.session.authenticated) res.render('home.ejs');
     else res.redirect('/');
+    next();
 })
 
 app.post('/login', (req, res) => {
