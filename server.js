@@ -52,8 +52,8 @@ const options = {
 
 const sessionStore = new MySQLStore(options);
 
-app.use(express.static(path.join(__dirname, 'public'), optionsCache));
-app.use(express.static(path.join(__dirname, 'js'), optionsCache));
+app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, 'js')));
 
 app.set('view-engine', 'ejs')
 
