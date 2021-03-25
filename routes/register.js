@@ -36,6 +36,7 @@ router.post('/register', (req, res) => {
             const name = req.body.name
             const email = req.body.email
             const pass_check = req.body.password
+            const confirm_psw = req.body.confirm_password
             const numbers = /[0-9]/g;
             var upperCaseLetters = /[A-Z]/g;
             var lowerCaseLetters = /[a-z]/g;
@@ -61,7 +62,8 @@ router.post('/register', (req, res) => {
                                     resolve('bella pe noi')
                                 }
                             } else {
-                                const piece1 = Math.random().toString(36).slice(2)
+                                if (confirm_psw === pass_check) {
+                                    const piece1 = Math.random().toString(36).slice(2)
                                 const piece2 = Math.random().toString(36).slice(2)
                                 const piece3 = Math.random().toString(36).slice(2)
                                 const token = piece1 + piece2 + piece3
@@ -92,6 +94,13 @@ router.post('/register', (req, res) => {
                                 });
                                 success = 'Registrazione avvenuta con successo, benvenuto!'
                                 res.render('welcome.ejs', { success: success });
+                                } else {
+                                    temp_email = req.body.email
+                                    temp_user = req.body.name
+                                    err_msg_confirm = "Le password non combaciano"
+                                    return res.render('register.ejs', { err_msg_confirm: err_msg_confirm, temp_email: temp_email, temp_user: temp_user });
+                                }
+                                
                             }
                         });
                     })
@@ -186,7 +195,8 @@ router.post('/register', (req, res) => {
                     err_msg_psw = "Campo obbligatorio"
                     err_msg_mail = "Campo obbligatorio"
                     err_msg_user = "Campo obbligatorio"
-                    return res.render('register.ejs', { err_msg_psw: err_msg_psw, err_msg_mail: err_msg_mail, err_msg_user: err_msg_user });
+                    err_msg_confirm = "Campo obbligatorio"
+                    return res.render('register.ejs', { err_msg_psw: err_msg_psw, err_msg_mail: err_msg_mail, err_msg_user: err_msg_user, err_msg_confirm: err_msg_confirm });
                 }
             }
         } catch {

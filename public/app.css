@@ -73,7 +73,7 @@ div.msg_err {
 
 
 div#register {
-	height: 700px;
+	height: 790px;
 	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.5), 0 6px 20px 0 rgba(0, 0, 0, 0.46);
 }
 
@@ -158,6 +158,10 @@ div.msg_err_lgn {
 	top: 200px;
 }
 
+#confirm-err {
+	top: 390px;
+}
+
 img {
 	display: block;
 	margin: 15px auto;
@@ -169,7 +173,6 @@ h2 {
 	font-family: sans-serif;
 	text-align: center;
 	font-size: 30px;
-	
 }
 
 form {
@@ -269,30 +272,37 @@ button[type=submit]:hover {
 	padding: 0;
 }
 
-.nav {
-	background: none;
-	list-style-type: none;
-	text-align: center;
-	margin:0;
-	padding: 0;
-}
-
 .nav li {
 	display: inline-block;
 	padding: 40px;
 	padding-top: 30px;
 }
 
-	
-
 a {
 	font-family: sans-serif;
 	font-size: 14px;
+}
 
+#recover {
+	font-size: 11px;
+	margin: 0 auto;
+	padding: 0;
+	position: absolute;
+	text-align: center;
+	width: 30%;
+	left: 35%;
+	margin-top: -50px;
+	color:white;
+	transition: 1s;
+}
+
+#recover:hover {
+	color:red;
+	transition: 1s;
 }
 
 a:link {
-	color: white;
+	color: purple;
 	text-decoration: none;
 }
 
@@ -340,5 +350,6 @@ input:invalid {
 }
 
 
-
-
+#qrcode {
+	border-radius: 0;
+}

@@ -25,7 +25,7 @@ router.post('/home', (req, res) => {
     if (err) {
       res.status(400).send('Unable to log out')
     } else {
-      success = 'Login avvenuto con successo, benvenuto!'
+      success = 'Logout avvenuto con successo, arrivederci!'
       res.render('welcome.ejs', { success: success });
     }
   });

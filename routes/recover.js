@@ -19,12 +19,11 @@ const con = mysql.createConnection({
 })
 
 router.get('/recover', (req, res) => {
-    /*if (req.session.authenticated) {
+    if (req.session.authenticated) {
         success = 'Sei già loggato, sarai portato alla home!'
         res.render('welcome.ejs', { success: success })
     }
-    else res.render('recover.ejs') */
-    res.render('recover.ejs')
+    else res.render('recover.ejs') 
 })
 
 router.post('/recover', (req, res) => {
