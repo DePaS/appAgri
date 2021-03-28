@@ -24,13 +24,12 @@ const con = mysql.createConnection({
 
 router.get('/user', (req, res) => {
     if (req.session.authenticated) {
-        con.query("SELECT user FROM login WHERE email = ?", [req.session.user.email], function (err, result_user) {
+        con.query("SELECT user, dfa_enabled FROM login WHERE email = ?", [req.session.user.email], function (err, result_user) {
             if (err) throw err
             email_session = req.session.user.email
             success = result_user[0].user
             const token = req.query.token
             const email = req.session.user.email
-            const doublefa = req.query.doublefa
             let tokeninv;
             if (token == 'true') {
                 tokeninv = true
@@ -65,7 +64,8 @@ router.get('/user', (req, res) => {
                     }
                 })
             }
-            res.render('user.ejs', { success: success, email_session: email_session, tokeninv: tokeninv });
+            doublefa = result_user[0].dfa_enabled
+            res.render('user.ejs', { success: success, email_session: email_session, tokeninv: tokeninv, doublefa: doublefa });
         })
     } else {
         success = 'Pagina non disponibile, effettuare la registrazione o il login'

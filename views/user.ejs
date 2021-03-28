@@ -25,7 +25,12 @@
         <% if(locals.msg_time) { %>
         <p><% msg_time %></p>
         <% } %>
+        <% if(!locals.doublefa) { %>
         <a href="/doublefa">Aggiungi 2FA tramite app</a>
+        <% } %>
+        <% if(locals.doublefa) { %>
+        <a href="/doublefa?remove=yes">Rimuovi 2FA tramite app</a>
+        <% } %>
         <p>non e' al momento possibile l'opzione tramite sms</p>
     </body>
 </html>

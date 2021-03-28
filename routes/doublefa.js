@@ -2,6 +2,7 @@ const express = require('express')
 const router = express.Router()
 const speakeasy = require('speakeasy')
 const secret = speakeasy.generateSecret(20);
+const url = speakeasy.otpauthURL({ secret: secret.ascii, label: 'depas.cloud', algorithm: 'sha1' });
 const qrcode = require('qrcode')
 const mysql = require('mysql');
 
@@ -19,7 +20,7 @@ router.get('/doublefa', (req, res) => {
         con.query("SELECT dfa_enabled FROM login WHERE email = ?", [email], function (err, enabled) {
             if (enabled[0].dfa_enabled != 'true') {
                 //else res.render('doublefa.ejs');
-                qrcode.toDataURL(secret.otpauth_url, function (err, data_url) {
+                qrcode.toDataURL(url, function (err, data_url) {
                     if (err) throw err
                     con.query("UPDATE login SET Dfa_token = ? WHERE email = ?", [
                         secret.base32,
@@ -27,17 +28,22 @@ router.get('/doublefa', (req, res) => {
                     ], function (err, result_token) {
                         if (err) throw err
                     })
-                    console.log(secret.base32)
                     let codice_qr = data_url
                     res.render('doublefa.ejs', { codice_qr: codice_qr })
                 });
             } else {
-                let success = 'auth a 2 fattori gia aggiunta in precedenza'
-                res.render('welcome.ejs', { success: success })
+                let remove = req.query.remove
+                if (remove == 'yes') {
+                    res.render('doublefa.ejs')
+                } else {
+                    let success = 'auth a 2 fattori gia aggiunta in precedenza'
+                    res.render('welcome.ejs', { success: success })
+                }
             }
         });
     } else {
-        res.render('doublefa.ejs')
+        let success = 'non sei loggato'
+        res.render('welcome.ejs', { success: success })
     }
     //res.end()
 })
@@ -48,31 +54,35 @@ router.post('/doublefa', (req, res) => {
         con.query('SELECT Dfa_token FROM login WHERE email = ?', [req.session.user.email], function (err, token) {
             if (err) throw err
             let token_client = req.body.password
-            console.log(token[0].Dfa_token)
             let verified = speakeasy.totp.verify({
                 secret: token[0].Dfa_token,
                 encoding: 'base32',
                 token: token_client
             });
             if (verified) {
-                con.query("UPDATE login SET dfa_enabled = 'true' WHERE email = ?", [email], function (err, result) {
-                    if (err) throw err
-                    console.log('2fa aggiornato')
-                    success = 'auth a 2 fattori con app aggiunta'
-                    res.render('welcome.ejs', { success: success })
-                })
-            } else {
-                console.log('mannagg a maron')
-                success = 'auth a 2 fattori fallita'
-                res.render('welcome.ejs', { success: success })
-            }
+                con.query('SELECT dfa_enabled FROM login WHERE email = ?', [req.session.user.email], function (err, enabled) {
+                    if (err) throw err 
+                    if (enabled[0].dfa_enabled != 'true') {
+                        con.query("UPDATE login SET dfa_enabled = 'true' WHERE email = ?", [email], function (err, result) {
+                            if (err) throw err
+                            success = 'auth a 2 fattori con app aggiunta'
+                            res.render('welcome.ejs', { success: success })
+                        })
+                    }
+                    if (enabled[0].dfa_enabled == 'true') {
+                        con.query("UPDATE login SET dfa_enabled = null, Dfa_token = null WHERE email = ?", [email], function (err, removed) {
+                            if (err) throw err
+                                success = 'auth a 2 fattori rimossa con successo'
+                                res.render('welcome.ejs', { success: success })
+                        })
+                    }
+                })  
+            } 
         })
     } else {
-        console.log('prova')
         con.query('SELECT Dfa_token FROM login WHERE email = ?', [req.session.user.email], function (err, token) {
             if (err) throw err
             let token_client = req.body.password
-            console.log(token[0].Dfa_token)
             let verified = speakeasy.totp.verify({
                 secret: token[0].Dfa_token,
                 encoding: 'base32',
@@ -87,7 +97,6 @@ router.post('/doublefa', (req, res) => {
                 res.render('welcome.ejs', { success: success });
             }
         });
-        //res.end()
     }
 })
 

@@ -34,18 +34,23 @@ router.post('/login', (req, res) => {
                                     if (result[0].password) {
                                         bcrypt.compare(password, result[0].password, function (err, result) {
                                             if (result) {
-                                                con.query("SELECT active, user FROM login WHERE email = ?", [email], function (err, result_active) {
+                                                con.query("SELECT active, user, dfa_enabled FROM login WHERE email = ?", [email], function (err, result_active) {
                                                     if (result_active[0].active == 'true') {
-                                                        /*
-                                                        req.session.authenticated = true;
-                                                        
-                                                        success = 'Login avvenuto con successo, benvenuto!'
-                                                        res.render('welcome.ejs', { success: success });*/
-                                                        let user = result_active[0].user
-                                                        req.session.user = {
-                                                            user, email, password
-                                                        };
-                                                        res.render('doublefa.ejs');
+                                                        if (result_active[0].dfa_enabled == 'true') {
+                                                            let user = result_active[0].user
+                                                            req.session.user = {
+                                                                user, email, password
+                                                            };
+                                                            res.render('doublefa.ejs');
+                                                        } else {
+                                                            req.session.authenticated = true;
+                                                            let user = result_active[0].user
+                                                            req.session.user = {
+                                                                user, email, password
+                                                            };
+                                                            success = 'Login avvenuto con successo, benvenuto!'
+                                                            res.render('welcome.ejs', { success: success });
+                                                        }
                                                     } else {
                                                         temp_email = req.body.email;
                                                         err_msg_psw = "la mail inserita e' registrata ma non ancora convalidata";
