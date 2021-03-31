@@ -1,7 +1,7 @@
 const express = require('express')
 const router = express.Router()
 const bcrypt = require('bcryptjs')
-const mysql = require('mysql');
+const mysql = require('mysql')
 
 const con = mysql.createConnection({
     host: process.env.DB_HOST,
@@ -13,7 +13,7 @@ const con = mysql.createConnection({
 router.get('/login', (req, res) => {
     if (req.session.authenticated) res.redirect('/')
     else res.render('login.ejs');
-    res.end()
+    //res.end()
 })
 
 router.post('/login', (req, res) => {

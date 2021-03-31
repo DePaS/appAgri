@@ -26,6 +26,7 @@ app.use(express.static(path.join(__dirname, 'js'), optionsCache));
 
 app.set('view-engine', 'ejs')
 
+
 app.use(session({
     secret: 'session_cookie_secret',
     cookie: { maxAge: 30000000 },

@@ -3,9 +3,6 @@ const router = express.Router()
 const mysql = require('mysql')
 const nodemailer = require('nodemailer');
 const bcrypt = require('bcryptjs')
-const speakeasy = require('speakeasy')
-const secret = speakeasy.generateSecret(20);
-const qrcode = require('qrcode')
 
 const transporter = nodemailer.createTransport({
     service: 'hotmail',
@@ -36,7 +33,7 @@ router.get('/user', (req, res) => {
                 con.query("SELECT token_auth_time FROM login WHERE email = ?", [email], function (err, auth_time) {
                     var timestamp = auth_time[0].token_auth_time
                     var timestamped = Date.parse(timestamp);
-                    var timeutc = 3600000 + timestamped
+                    var timeutc = 7200000 + timestamped
                     var timediff = timeutc + 300000
                     var ora = new Date();
                     var adesso = ora.getTime()

@@ -1,10 +1,20 @@
 const express = require('express')
+const app = module.exports = express()
 const router = express.Router()
 const speakeasy = require('speakeasy')
 const secret = speakeasy.generateSecret(20);
 const url = speakeasy.otpauthURL({ secret: secret.ascii, label: 'depas.cloud', algorithm: 'sha1' });
 const qrcode = require('qrcode')
 const mysql = require('mysql');
+const nodemailer = require('nodemailer');
+
+const transporter = nodemailer.createTransport({
+    service: 'hotmail',
+    auth: {
+        user: 'helpdesk-appagri@hotmail.com',
+        pass: 'Life16!/75'
+    }
+});
 
 const con = mysql.createConnection({
     host: process.env.DB_HOST,
@@ -32,20 +42,99 @@ router.get('/doublefa', (req, res) => {
                     res.render('doublefa.ejs', { codice_qr: codice_qr })
                 });
             } else {
+                let key = req.query.key
+                console.log(key)
                 let remove = req.query.remove
-                if (remove == 'yes') {
-                    res.render('doublefa.ejs')
-                } else {
-                    let success = 'auth a 2 fattori gia aggiunta in precedenza'
-                    res.render('welcome.ejs', { success: success })
+                let rembymail = req.query.rembymail 
+                if (key != null && key != undefined) {
+                    console.log(key)
+                    con.query("SELECT Dfa_token FROM login WHERE email = ?", [email], function(err, res_key) {
+                        if (err) throw err 
+                        if (res_key[0].Dfa_token != undefined) {
+                            if (res_key[0].Dfa_token == key) {
+                                con.query("UPDATE login SET Dfa_token = NULL, dfa_enabled = null, Dfa_token_time = NULL WHERE email = ?", [email], function(err, res_key2) {
+                                    if (err) throw err 
+                                    success = "autenticatore a due fattori rimosso con successo"
+                                    res.render('welcome.ejs', { success: success })
+                                })
+                            } else {
+                                success = "il link fornito per la rimozione non e' valido oppure e' scaduto"
+                                res.render('welcome.ejs', { success: success })
+                            }
+                        } else {
+                            success = 'Nessuna auth a 2 fattori da rimuovere'
+                            res.render('welcome.ejs', { success: success })
+                        }
+                    })
                 }
+                if (key == null || key == undefined) {
+                    if (remove == 'yes') { 
+                        console.log('remove')
+                        if (rembymail == 'true' ) {
+                            console.log(rembymail)
+                            con.query("SELECT Dfa_token, Dfa_token_time FROM login WHERE email = ?", [email], function(err, result){
+                                if (err) throw err
+                                var timestamp = result[0].Dfa_token_time
+                                var timestamped = Date.parse(timestamp);
+                                var timeutc = 7200000 + timestamped
+                                var timediff = timeutc + 300000
+                                var ora = new Date();
+                                var adesso = ora.getTime()
+                                /*
+                                function timedMail() {
+                                    con.query("UPDATE login SET Dfa_token_time = CURRENT_TIMESTAMP WHERE email = ?", [email], function(err, result2) {
+                                        if (err) throw err 
+                                        const mailOptions = {
+                                            from: 'helpdesk-appagri@hotmail.com',
+                                            to: email,
+                                            subject: 'rimozione 2fa',
+                                            html: '<p>clicka sul link di seguito per rimuovere il 2fa \n</p>' + 
+                                            '\n \n<a href="http://localhost:8080/doublefa?key=' + result[0].Dfa_token + '">click</a>'
+                                        }
+                                        transporter.sendMail(mailOptions, function (err, info) {
+                                            if (err) {
+                                                console.log(err)
+                                            } else {
+                                                console.log('Sent: ' + info.response);
+                                                success = "mail inviata per la rimozione dell'autenticatore a due fattori"
+                                                res.render('welcome.ejs', {success: success})
+                                            }
+                                        });
+                                    })
+                                }
+                                */
+                                if (result[0].Dfa_token_time == undefined) {
+                                    console.log('indefinito')
+                                    timedMail()
+                                }
+                                if (result[0].Dfa_token_time != undefined) {
+                                    console.log('definito')
+                                    if (timediff < adesso) {
+                                        console.log(timediff)
+                                        console.log(adesso)
+                                        timedMail()
+                                    } else {
+                                        success = 'attendere 5 minuti per richiedere un nuovo link'
+                                        res.render('welcome.ejs', { success: success })
+                                    }
+                                }
+                            })
+                        }
+                        else {
+                            res.render('doublefa.ejs')
+                        }
+                    } else {
+                        success = 'auth a 2 fattori gia aggiunta in precedenza'
+                        res.render('welcome.ejs', { success: success })
+                    }
+                }
+                
             }
         });
     } else {
         let success = 'non sei loggato'
         res.render('welcome.ejs', { success: success })
     }
-    //res.end()
 })
 
 router.post('/doublefa', (req, res) => {

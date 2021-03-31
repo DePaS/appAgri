@@ -12,7 +12,6 @@ const transporter = nodemailer.createTransport({
     }
 });
 
-
 const pool = mysql.createPool({
     connectionLimit: 100,
     host: process.env.DB_HOST,
