@@ -41,7 +41,6 @@ div {
 	left: 0;
 	right: 0;
 	margin: auto;
-	max-width;
 	height: 250px;
 	background-image: linear-gradient( to bottom, rgb(242, 242, 242), rgb(210, 210, 210));
 	padding: 20px;
@@ -107,7 +106,6 @@ h5 {
   width: 26px;
   height: 26px;
   border-radius: 13px;
-  background-color;
   color: #80bfff;
   animation: dotFlashing 1s infinite linear alternate;
   animation-delay: .5s;
