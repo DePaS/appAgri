@@ -47,7 +47,8 @@ app.use((req, res, next) => {
 
 app.get('/', (req, res) => {
     if (req.session.authenticated) {
-        res.render('home.ejs')
+        let success = req.session.user.user
+        res.render('home.ejs', { success: success })
     }
     else res.render('login.ejs');
 })

@@ -1,10 +1,19 @@
-<% if (locals.success) { %>
-<h4>
-    <%= success %>
-</h4>
-<% } %>
-<script>
-    setTimeout(function(){
-        window.location = '/home';
-    }, 2000)
-</script>
+<head>
+    <link rel='stylesheet' href='/intermezzo.css'>
+    <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    </head>
+    <body>
+    <% if (locals.success) { %> 
+    <div id="pepega">
+    <h4 id="LUL">
+        <%= success %>
+    </h4>
+      <div class="dot-flashing">
+      </div>
+      </div>
+    <% } %>
+    <script>
+        setTimeout(function(){
+            window.location = '/home';
+        }, 2000);
+    </script>

@@ -2,6 +2,17 @@ const express = require('express')
 const router = express.Router()
 const bcrypt = require('bcryptjs')
 const mysql = require('mysql')
+const session = require('express-session');
+const MySQLStore = require('express-mysql-session')(session);
+
+const options = {
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASS,
+    database: process.env.DB_TABLE
+}
+
+const sessionStore = new MySQLStore(options);
 
 const con = mysql.createConnection({
     host: process.env.DB_HOST,
@@ -26,7 +37,7 @@ router.post('/login', (req, res) => {
                 if (email) {
                     con.query("SELECT email FROM login WHERE email = ? AND email IS NOT NULL", [email], function (err, emailCheck) {
                         if (emailCheck[0] === undefined && password) {
-                            err_msg_mail = "L'Email inserita non è presente nel DB."
+                            err_msg_mail = "L'e-mail inserita non è registrata"
                             return res.render('login.ejs', { err_msg_mail: err_msg_mail });
                         } else {
                             if (password) {
@@ -48,6 +59,16 @@ router.post('/login', (req, res) => {
                                                             req.session.user = {
                                                                 user, email, password
                                                             };
+                                                            console.log(req.body.checkbox)
+                                                            if (req.body.checkbox != undefined) {
+                                                                app.use(session({
+                                                                    secret: 'session_cookie_secret',
+                                                                    cookie: { maxAge: 100 },
+                                                                    store: sessionStore,
+                                                                    resave: false,
+                                                                    saveUninitialized: false
+                                                                }));
+                                                            }
                                                             success = 'Login avvenuto con successo, benvenuto!'
                                                             res.render('welcome.ejs', { success: success });
                                                         }
@@ -59,7 +80,7 @@ router.post('/login', (req, res) => {
                                                 })
                                             } else {
                                                 temp_email = req.body.email;
-                                                err_msg_psw = "La password inserita non è valida.";
+                                                err_msg_psw = "La password inserita è errata.";
                                                 return res.render('login.ejs', { err_msg_psw: err_msg_psw, temp_email: temp_email });
                                             }
                                         })
@@ -77,8 +98,8 @@ router.post('/login', (req, res) => {
                         err_msg_mail = 'Inserire la mail';
                         return res.render('login.ejs', { err_msg_mail: err_msg_mail });
                     } else {
-                        err_msg_mail = 'Campo Obbligatorio';
-                        err_msg_psw = "Campo Obbligatorio";
+                        err_msg_mail = "Inserire l'e-mail";
+                        err_msg_psw = "Inserire la password";
                         return res.render('login.ejs', { err_msg_psw: err_msg_psw, err_msg_mail: err_msg_mail });
                     }
 
@@ -89,11 +110,11 @@ router.post('/login', (req, res) => {
                 err_msg_mail = "L'E-Mail inserita non è valida";
                 return res.render('login.ejs', { err_msg_mail: err_msg_mail });
             } else if (!password) {
-                err_msg_mail = 'Campo Obbligatorio';
-                err_msg_psw = "Campo Obbligatorio";
+                err_msg_mail = "Inserire l'e-mail";
+                err_msg_psw = "Inserire la password";
                 return res.render('login.ejs', { err_msg_psw: err_msg_psw, err_msg_mail: err_msg_mail });
             } else {
-                err_msg_mail = 'Campo Obbligatorio';
+                err_msg_psw = "Inserire la password";
                 return res.render('login.ejs', { err_msg_mail: err_msg_mail });
             }
         }

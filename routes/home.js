@@ -13,6 +13,7 @@ router.get('/home', (req, res) => {
   if (req.session.authenticated) {
     con.query("SELECT user FROM login WHERE email = ?", [req.session.user.email], function(err, result_user){
       if (err) throw err
+      console.log(result_user[0].user)
       success = result_user[0].user
       res.render('home.ejs', { success: success });
     })

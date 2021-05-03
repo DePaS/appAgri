@@ -12,6 +12,11 @@
 </head>
 
 <body>
+    <div>
+        <h3>
+            Se hai dimenticato la tua password, inserisci la tua e-mail nel form qui sotto, ti sarà inviata una e-mail con un link per cambiare la tua password
+        </h3>
+    </div>
     <% if(locals.err_msg_mail) { %>
         <div class="msg_err_lgn" id="mail-err_lgn">
             <%= err_msg_mail %>
@@ -20,7 +25,7 @@
             <div>
                 <img
                     src="https://image.freepik.com/free-vector/artistic-leaf-logo-design-agriculture-company_100735-16.jpg">
-                <h2>RECOVER</h2>
+                <h2>Password dimenticata</h2>
                 <form action="/recover" method="POST" id="invia" autocomplete="off">
                     <input type="text" id="email" name="email" placeholder="E-Mail" autocomplete="false" <%
                         if(locals.temp_email) { %> value="<%= temp_email %>" <% } %>>

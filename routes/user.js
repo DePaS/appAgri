@@ -21,6 +21,7 @@ const con = mysql.createConnection({
 
 router.get('/user', (req, res) => {
     if (req.session.authenticated) {
+        console.log(req.session.cookie._expires)
         con.query("SELECT user, dfa_enabled FROM login WHERE email = ?", [req.session.user.email], function (err, result_user) {
             if (err) throw err
             email_session = req.session.user.email

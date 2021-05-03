@@ -143,7 +143,11 @@ div.msg_err_lgn {
 }
 
 #mail-err {
-	top: 25px;
+	top: -70px;
+}
+
+#campi-err {
+	top: -240px;
 }
 
 #mail-err_lgn {
@@ -155,11 +159,12 @@ div.msg_err_lgn {
 }
 
 #psw-err {
-	top: 200px;
+	height: fit-content;
+	top: 130px;
 }
 
 #confirm-err {
-	top: 390px;
+	top: 300px;
 }
 
 img {

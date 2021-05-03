@@ -51,8 +51,9 @@ router.post('/recover', (req, res) => {
                                 from: 'helpdesk-appagri@hotmail.com',
                                 to: email,
                                 subject: 'registrazione',
-                                html: '<p>registrazione avvenuta con successo \nTi resta solo da attivare il tuo account clickando sul link di seguito \n </p>' +
-                                    '\n \n<a href="http://localhost:8080/recovery?email=' + email + '&token=' + token + '">click</a>'
+                                html: "<p>E' stato richiesto il cambio password \nDi seguito il link per effettuare il cambio password \n </p>" +
+                                    '\n \n<a href="http://localhost:8080/recovery?email=' + email + '&token=' + token + '">click</a>' +
+                                    "<p>Qualora tu non abbia chiesto il cambio password, puoi semplicemente ignorare questa e-mail</p>"
                             }
                             transporter.sendMail(mailOptions, function (err, info) {
                                 if (err) {

@@ -96,7 +96,7 @@ router.post('/register', (req, res) => {
                                 } else {
                                     temp_email = req.body.email
                                     temp_user = req.body.name
-                                    err_msg_confirm = "Le password non combaciano"
+                                    err_msg_confirm = "Le password non coincidono"
                                     return res.render('register.ejs', { err_msg_confirm: err_msg_confirm, temp_email: temp_email, temp_user: temp_user });
                                 }
                                 
@@ -135,7 +135,7 @@ router.post('/register', (req, res) => {
                     if ((validUser != 'valido') && (validEmail != 'valido')) {
                         err_msg_user = "L'username deve avere lunghezza compresa tra 6 e 15 caratteri"
                         err_msg_mail = "Controllare correttezza formale E-Mail"
-                        err_msg_psw = "La password deve avere lunghezza compresa tra 8 e 16 caratteri e contenere almeno una A, a e un numero"
+                        err_msg_psw = "La password deve avere lunghezza compresa tra 8 e 16 caratteri e contenere almeno una lettera Maiuscola, una minuscola, un numero ed un carattere speciale"
                         temp_email = req.body.email
                         temp_user = req.body.name
                         if (validPassword != 'valido') {
@@ -164,37 +164,37 @@ router.post('/register', (req, res) => {
                 }
             } else {
                 if (name && email && !pass_check) {
-                    err_msg_psw = "Campo obbligatorio"
+                    err_msg_psw = "Inserire la password"
                     temp_user = req.body.name
                     temp_email = req.body.email
                     return res.render('register.ejs', { err_msg_psw: err_msg_psw, temp_user: temp_user, temp_email: temp_email });
                 } else if (name && !email && !pass_check) {
-                    err_msg_psw = "Campo obbligatorio"
-                    err_msg_mail = "Campo obbligatorio"
+                    err_msg_psw = "Inserire la password"
+                    err_msg_mail = "Inserire l'e-mail"
                     temp_user = req.body.name
                     return res.render('register.ejs', { err_msg_psw: err_msg_psw, err_msg_mail: err_msg_mail, temp_user: temp_user });
                 } else if (!name && email && !pass_check) {
-                    err_msg_psw = "Campo obbligatorio"
-                    err_msg_user = "Campo obbligatorio"
+                    err_msg_psw = "Inserire la password"
+                    err_msg_user = "Inserire l'username"
                     temp_email = req.body.email
                     return res.render('register.ejs', { err_msg_psw: err_msg_psw, err_msg_user: err_msg_user, temp_email: temp_email });
                 } else if (!name && !email && pass_check) {
-                    err_msg_mail = "Campo obbligatorio"
-                    err_msg_user = "Campo obbligatorio"
+                    err_msg_psw = "Inserire la password"
+                    err_msg_user = "Inserire l'username"
                     return res.render('register.ejs', { err_msg_mail: err_msg_mail, err_msg_user: err_msg_user });
                 } else if (!name && email && pass_check) {
-                    err_msg_user = "Campo obbligatorio"
+                    err_msg_user = "Inserire l'username"
                     temp_email = req.body.email
                     return res.render('register.ejs', { err_msg_user: err_msg_user, temp_email: temp_email });
                 } else if (name && !email && pass_check) {
-                    err_msg_mail = "Campo obbligatorio"
+                    err_msg_mail = "Inserire l'e-mail"
                     temp_user = req.body.name
                     return res.render('register.ejs', { err_msg_mail: err_msg_mail, temp_user: temp_user });
                 } else if (!name && !email && !pass_check) {
-                    err_msg_psw = "Campo obbligatorio"
-                    err_msg_mail = "Campo obbligatorio"
-                    err_msg_user = "Campo obbligatorio"
-                    err_msg_confirm = "Campo obbligatorio"
+                    err_msg_psw = "Inserire la password"
+                    err_msg_mail = "Inserire l'e-mail"
+                    err_msg_user = "Inserire l'username"
+                    err_msg_confirm = "Confermare la password"
                     return res.render('register.ejs', { err_msg_psw: err_msg_psw, err_msg_mail: err_msg_mail, err_msg_user: err_msg_user, err_msg_confirm: err_msg_confirm });
                 }
             }
